@@ -1,24 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import { questions } from "./questions";
 
 function App() {
+  const [showScore, setShowScore] = useState<boolean>(false);
+  const [currentQuestTion, setCurrentQuestion] = useState<number>(0);
+  const [score, setScore] = useState<number>(0);
+
+  const handleCheckAnswer = (isCorrect: boolean) => {
+    if (isCorrect) {
+      setScore(score + 1);
+      let nextQuestion = currentQuestTion + 1;
+      if(nextQuestion < questions.length) {
+        setCurrentQuestion(nextQuestion)
+      } else {
+        setShowScore(true)
+      }
+    };
+  };
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      {showScore ? (
+        <section className="showScore-section">
+          Your score is {score} out of {questions.length}
+        </section>
+      ) : (
+        <>
+          <section className="question-section">
+            <h1>{`${questions[currentQuestTion].questionText}`}</h1>
+          </section>
+          <section className="flex flex-col gap-y-5 mt-7">
+            {questions[currentQuestTion].answerOption.map((item, index) => {
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleCheckAnswer(item.isCorrect)}
+                  className="w-full py-3"
+                >
+                  {item.answerText}
+                </button>
+              );
+            })}
+          </section>
+        </>
+      )}
     </div>
   );
 }
